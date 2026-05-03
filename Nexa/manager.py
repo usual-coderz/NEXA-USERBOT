@@ -13,3 +13,10 @@ async def start_client(user_id, string):
 
     clients[user_id] = client
     return client
+
+
+async def stop_client(user_id):
+    client = clients.get(user_id)
+    if client:
+        await client.disconnect()
+        del clients[user_id]
