@@ -5,7 +5,7 @@ __all__ = [
     "API_ID",
     "API_HASH",
     "BOT_TOKEN",
-    "SESSIONS_FILE",
+    "MONGO_URI",
     "clients",
     "start_client",
     "stop_client",
