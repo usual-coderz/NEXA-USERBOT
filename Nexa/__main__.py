@@ -1,28 +1,23 @@
 import asyncio
-from Nexa.bot import start_bot
 from Nexa.manager import start_client
-import json, os
-from Nexa.config import SESSIONS_FILE
+from Nexa.database import get_all_sessions
+from Nexa.plugins import load as load_plugins
+from Nexa.bot import start_bot
 
 async def load_sessions():
-    if not os.path.exists(SESSIONS_FILE):
-        return
+    sessions = await get_all_sessions()
 
-    with open(SESSIONS_FILE) as f:
-        data = json.load(f)
-
-    for user_id, string in data.items():
+    for user_id, string in sessions:
         try:
-            await start_client(user_id, string)
+            client = await start_client(user_id, string)
+            load_plugins(client)
         except:
             pass
 
 async def main():
-    print("🔥 Starting Nexa System")
+    print("Starting Nexa")
 
     await load_sessions()
-
-    # 🔥 THIS LINE FIXES YOUR ISSUE
     await start_bot()
 
 if __name__ == "__main__":
