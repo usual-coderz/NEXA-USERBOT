@@ -1,4 +1,4 @@
-from .config import API_ID, API_HASH, BOT_TOKEN, SESSIONS_FILE
+from .config import API_ID, API_HASH, BOT_TOKEN
 from .manager import clients, start_client, stop_client
 
 __all__ = [
