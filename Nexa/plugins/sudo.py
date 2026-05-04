@@ -6,7 +6,7 @@ def setup(client):
         me = await client.get_me()
         return me.id
 
-    @client.on(events.NewMessage(pattern=r"/addsudo$", outgoing=True))
+    @client.on(events.NewMessage(pattern=r"/addsudo$"))
     async def addsudo(event):
         if not event.is_reply:
             return await event.reply("Reply to user")
@@ -23,7 +23,7 @@ def setup(client):
         await add_sudo(me_id, target, "sudo")
         await event.reply("Added Sudo")
 
-    @client.on(events.NewMessage(pattern=r"/fullsudo$", outgoing=True))
+    @client.on(events.NewMessage(pattern=r"/fullsudo$"))
     async def fullsudo(event):
         if not event.is_reply:
             return await event.reply("Reply to user")
@@ -40,7 +40,7 @@ def setup(client):
         await add_sudo(me_id, target, "full")
         await event.reply("Added Full Sudo")
 
-    @client.on(events.NewMessage(pattern=r"/delsudo$", outgoing=True))
+    @client.on(events.NewMessage(pattern=r"/delsudo$"))
     async def delsudo(event):
         if not event.is_reply:
             return await event.reply("Reply to user")
@@ -58,27 +58,27 @@ def setup(client):
         await event.reply("Removed")
 
     @client.on(events.NewMessage(pattern=r"/sudolist$"))
-async def sudolist(event):
-    me = await client.get_me()
-    me_id = me.id
+    async def sudolist(event):
+        me = await client.get_me()
+        me_id = me.id
 
-    data = await get_sudos(me_id)
+        data = await get_sudos(me_id)
 
-    if not data:
-        return await event.reply("No sudo users")
+        if not data:
+            return await event.reply("No sudo users")
 
-    text = "Sudo Users:\n\n"
+        text = "Sudo Users:\n\n"
 
-    for d in data:
-        uid = d["target_id"]
-        level = d["level"]
+        for d in data:
+            uid = d["target_id"]
+            level = d["level"]
 
-        try:
-            user = await client.get_entity(uid)
-            name = user.first_name or "User"
-        except:
-            name = "Unknown"
+            try:
+                user = await client.get_entity(uid)
+                name = user.first_name or "User"
+            except:
+                name = "Unknown"
 
-        text += f'<a href="tg://user?id={uid}">{name}</a> - {level}\n'
+            text += f'<a href="tg://user?id={uid}">{name}</a> - {level}\n'
 
-    await event.reply(text, parse_mode="html")
+        await event.reply(text, parse_mode="html")
