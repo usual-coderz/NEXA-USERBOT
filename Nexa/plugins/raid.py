@@ -24,7 +24,7 @@ def setup(client):
             return await event.reply("Usage: .raid <user/msg> <msg> <count>")
 
         count = int(args[-1])
-        count = max(1, min(count, 100))
+        count = max(1, min(count, 500))
 
         target = None
 
@@ -65,7 +65,7 @@ def setup(client):
                     f"{mention} {msg_text}",
                     parse_mode="html"
                 )
-                await asyncio.sleep(1.2)
+                await asyncio.sleep(1)
 
             raid_tasks.pop(event.chat_id, None)
 
