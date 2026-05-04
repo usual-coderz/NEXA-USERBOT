@@ -2,8 +2,20 @@ import os
 import importlib
 
 def load(client):
-    for file in os.listdir(os.path.dirname(__file__)):
+    path = os.path.dirname(__file__)
+
+    for file in os.listdir(path):
         if file.endswith(".py") and not file.startswith("__"):
-            module = importlib.import_module(f"Nexa.plugins.{file[:-3]}")
-            if hasattr(module, "setup"):
-                module.setup(client)
+            module_name = f"Nexa.plugins.{file[:-3]}"
+
+            try:
+                if module_name in globals():
+                    module = importlib.reload(importlib.import_module(module_name))
+                else:
+                    module = importlib.import_module(module_name)
+
+                if hasattr(module, "setup"):
+                    module.setup(client)
+
+            except Exception as e:
+                print(f"Failed to load {module_name}: {e}")
