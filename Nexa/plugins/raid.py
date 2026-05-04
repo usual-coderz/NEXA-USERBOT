@@ -5,6 +5,16 @@ def setup(client):
 
     raid_tasks = {}
 
+    HELP_TEXT = (
+        "RAID COMMAND\n\n"
+        ".raid <id/username/reply> <message> <count>\n\n"
+        "Examples:\n"
+        ".raid 123456 hello 10\n"
+        ".raid @user hello 10\n"
+        "(reply) .raid hello 10\n\n"
+        ".stopraid - stop raid"
+    )
+
     async def allowed(event):
         me = await client.get_me()
         return (
@@ -13,17 +23,26 @@ def setup(client):
             or await is_sudo(me.id, event.sender_id)
         )
 
-    @client.on(events.NewMessage(pattern=r"\.raid\s+(.+)$"))
+    @client.on(events.NewMessage(pattern=r"\.raid(?:\s+(.*))?$"))
     async def raid(event):
         if not await allowed(event):
             return
 
-        args = event.pattern_match.group(1).strip().split()
+        raw = event.pattern_match.group(1)
+
+        if not raw:
+            return await event.reply(HELP_TEXT)
+
+        args = raw.strip().split()
 
         if len(args) < 2:
-            return await event.reply("Usage: .raid <user/msg> <msg> <count>")
+            return await event.reply(HELP_TEXT)
 
-        count = int(args[-1])
+        try:
+            count = int(args[-1])
+        except:
+            return await event.reply("❌ Invalid count\n\n" + HELP_TEXT)
+
         count = max(1, min(count, 500))
 
         target = None
@@ -43,7 +62,7 @@ def setup(client):
                     target = user.id
                     msg_text = " ".join(args[1:-1])
             except:
-                return await event.reply("Invalid user")
+                return await event.reply("❌ Invalid user\n\n" + HELP_TEXT)
 
         try:
             user = await client.get_entity(target)
@@ -60,6 +79,7 @@ def setup(client):
             for _ in range(count):
                 if event.chat_id not in raid_tasks:
                     break
+
                 await client.send_message(
                     event.chat_id,
                     f"{mention} {msg_text}",
@@ -86,4 +106,4 @@ def setup(client):
 
             await client.send_message(event.chat_id, "Raid stopped")
         else:
-            await event.reply("No active raid")
+            await event.reply("❌ No active raid")
