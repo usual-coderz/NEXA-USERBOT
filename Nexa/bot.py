@@ -4,6 +4,7 @@ from telethon.sessions import StringSession
 from Nexa.config import API_ID, API_HASH, BOT_TOKEN
 from Nexa.manager import start_client, stop_client
 from Nexa.plugins import load as load_plugins
+from Nexa.utils.words import load_words
 from Nexa.database import add_session, get_sessions, delete_session
 
 bot = TelegramClient("bot", API_ID, API_HASH)
