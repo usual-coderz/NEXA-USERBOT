@@ -57,17 +57,28 @@ def setup(client):
         await remove_sudo(me_id, target)
         await event.reply("Removed")
 
-    @client.on(events.NewMessage(pattern=r"/sudolist$", outgoing=True))
-    async def sudolist(event):
-        me_id = await get_me_id()
+    @client.on(events.NewMessage(pattern=r"/sudolist$"))
+async def sudolist(event):
+    me = await client.get_me()
+    me_id = me.id
 
-        data = await get_sudos(me_id)
+    data = await get_sudos(me_id)
 
-        if not data:
-            return await event.reply("No sudo users")
+    if not data:
+        return await event.reply("No sudo users")
 
-        text = "Sudo Users:\n\n"
-        for d in data:
-            text += f"{d['target_id']} - {d['level']}\n"
+    text = "Sudo Users:\n\n"
 
-        await event.reply(text)
+    for d in data:
+        uid = d["target_id"]
+        level = d["level"]
+
+        try:
+            user = await client.get_entity(uid)
+            name = user.first_name or "User"
+        except:
+            name = "Unknown"
+
+        text += f'<a href="tg://user?id={uid}">{name}</a> - {level}\n'
+
+    await event.reply(text, parse_mode="html")
