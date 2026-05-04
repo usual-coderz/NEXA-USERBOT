@@ -22,7 +22,6 @@ def setup(client):
             return await event.reply("Reply to user first")
 
         reply = await event.get_reply_message()
-
         active[event.chat_id] = reply.sender_id
 
         if event.out:
@@ -50,9 +49,8 @@ def setup(client):
         if not event.is_reply:
             return
 
-        try:
-            reply = await event.get_reply_message()
-        except:
+        reply = await event.get_reply_message()
+        if not reply:
             return
 
         target = active[event.chat_id]
@@ -61,7 +59,7 @@ def setup(client):
             return
 
         try:
-            with open("word.txt", "r", encoding="utf-8") as f:
+            with open("Nexa/word.txt", "r", encoding="utf-8") as f:
                 words = [x.strip() for x in f.readlines() if x.strip()]
         except:
             return
