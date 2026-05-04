@@ -7,12 +7,17 @@ from Nexa.bot import start_bot
 async def load_sessions():
     sessions = await get_all_sessions()
 
-    for user_id, string in sessions:
+    for doc in sessions:
         try:
-            client = await start_client(user_id, string)
+            user_id = doc["user_id"]
+            string = doc["string"]
+            session_id = str(doc["_id"])
+
+            client = await start_client(user_id, string, session_id)
             load_plugins(client)
-        except:
-            pass
+
+        except Exception as e:
+            print("SESSION LOAD ERROR:", e)
 
 async def main():
     print("Starting Nexa")
