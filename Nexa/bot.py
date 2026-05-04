@@ -8,11 +8,11 @@ from Nexa.database import add_session
 
 bot = TelegramClient("bot", API_ID, API_HASH)
 
-@bot.on(events.NewMessage(pattern="/start"))
+@bot.on(events.NewMessage(pattern=r"^/start$"))
 async def start(event):
     await event.reply("Send /add <string_session>")
 
-@bot.on(events.NewMessage(pattern=r"/add (.+)"))
+@bot.on(events.NewMessage(pattern=r"^/add\s+(.+)$"))
 async def add(event):
     user_id = event.sender_id
     string = event.pattern_match.group(1).strip()
@@ -27,8 +27,8 @@ async def add(event):
         await test.connect()
 
         if not await test.is_user_authorized():
-            await msg.edit("Invalid session")
             await test.disconnect()
+            await msg.edit("Invalid session")
             return
 
         me = await test.get_me()
