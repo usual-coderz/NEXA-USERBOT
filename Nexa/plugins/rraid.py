@@ -19,7 +19,7 @@ def setup(client):
             return
 
         if not event.is_reply:
-            return await event.reply("Reply to a user first")
+            return await event.reply("Reply to user first")
 
         reply = await event.get_reply_message()
 
@@ -42,7 +42,7 @@ def setup(client):
 
         await client.send_message(event.chat_id, "Reply Raid Stopped")
 
-    @client.on(events.NewMessage)
+    @client.on(events.NewMessage(incoming=True))
     async def watcher(event):
         if event.chat_id not in active:
             return
@@ -50,7 +50,11 @@ def setup(client):
         if not event.is_reply:
             return
 
-        reply = await event.get_reply_message()
+        try:
+            reply = await event.get_reply_message()
+        except:
+            return
+
         target = active[event.chat_id]
 
         if reply.sender_id != target:
@@ -58,7 +62,7 @@ def setup(client):
 
         try:
             with open("word.txt", "r", encoding="utf-8") as f:
-                words = [i.strip() for i in f.readlines() if i.strip()]
+                words = [x.strip() for x in f.readlines() if x.strip()]
         except:
             return
 
@@ -67,8 +71,4 @@ def setup(client):
 
         word = random.choice(words)
 
-        await client.send_message(
-            event.chat_id,
-            word,
-            reply_to=event.id
-        )
+        await event.reply(word)
