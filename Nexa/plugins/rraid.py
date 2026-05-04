@@ -1,11 +1,9 @@
 def setup(client):
     from telethon import events
-    import asyncio
     import random
     from Nexa.sudo import is_sudo, is_fullsudo
 
     active = {}
-    tasks = {}
 
     async def allowed(event):
         me = await client.get_me()
@@ -24,32 +22,25 @@ def setup(client):
             return await event.reply("Reply to a user first")
 
         reply = await event.get_reply_message()
-        chat_id = event.chat_id
 
-        active[chat_id] = reply.sender_id
+        active[event.chat_id] = reply.sender_id
 
         if event.out:
             await event.delete()
 
-        await client.send_message(chat_id, "Reply Raid Active")
+        await client.send_message(event.chat_id, "Reply Raid Active")
 
     @client.on(events.NewMessage(pattern=r"\.rrstop$"))
     async def rraid_off(event):
         if not await allowed(event):
             return
 
-        chat_id = event.chat_id
-
-        active.pop(chat_id, None)
-
-        if chat_id in tasks:
-            tasks[chat_id].cancel()
-            tasks.pop(chat_id, None)
+        active.pop(event.chat_id, None)
 
         if event.out:
             await event.delete()
 
-        await client.send_message(chat_id, "Reply Raid Stopped")
+        await client.send_message(event.chat_id, "Reply Raid Stopped")
 
     @client.on(events.NewMessage)
     async def watcher(event):
@@ -59,12 +50,11 @@ def setup(client):
         if not event.is_reply:
             return
 
+        reply = await event.get_reply_message()
         target = active[event.chat_id]
 
-        if event.reply_to_msg_id:
-            reply = await event.get_reply_message()
-            if reply.sender_id != target:
-                return
+        if reply.sender_id != target:
+            return
 
         try:
             with open("word.txt", "r", encoding="utf-8") as f:
