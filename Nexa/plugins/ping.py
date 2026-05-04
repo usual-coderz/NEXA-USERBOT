@@ -11,7 +11,7 @@ def setup(client):
             or await is_sudo(me.id, event.sender_id)
         )
 
-    @client.on(events.NewMessage(pattern=r"\.ping$"))
+    @client.on(events.NewMessage(pattern=r"(?i)^\.ping$"))
     async def ping(event):
         if not await allowed(event):
             return
