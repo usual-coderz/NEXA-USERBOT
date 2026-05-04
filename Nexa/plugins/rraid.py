@@ -67,7 +67,7 @@ def setup(client):
                 return
 
         try:
-            with open("word.txt", "r", encoding="utf-8") as f:
+            with open("gali.txt", "r", encoding="utf-8") as f:
                 words = [i.strip() for i in f.readlines() if i.strip()]
         except:
             return
