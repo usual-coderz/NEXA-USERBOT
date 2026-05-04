@@ -8,14 +8,7 @@ def load(client):
         if file.endswith(".py") and not file.startswith("__"):
             module_name = f"Nexa.plugins.{file[:-3]}"
 
-            try:
-                if module_name in globals():
-                    module = importlib.reload(importlib.import_module(module_name))
-                else:
-                    module = importlib.import_module(module_name)
+            module = importlib.import_module(module_name)
 
-                if hasattr(module, "setup"):
-                    module.setup(client)
-
-            except Exception as e:
-                print(f"Failed to load {module_name}: {e}")
+            if hasattr(module, "setup"):
+                module.setup(client)
